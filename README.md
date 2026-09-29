@@ -45,6 +45,38 @@ The main supports the following additional arguments:
 -   `--full_depth`: Track all dependencies, including transitive dependencies of direct third-party deps
 -   `--show_optional`: Show whether each dependency is optional or required
 
+## Lazy import statistics
+
+`import_tracker.lazy.LazyImport` defers a module import until its first
+attribute access and records observability statistics for the resolution:
+
+```python
+from import_tracker import LazyImport
+
+json_mod = LazyImport("json")
+json_mod.dumps({"a": 1})  # real importlib.import_module happens here
+
+json_mod.stats()          # per-instance view (module / hits / resolved)
+import_tracker.lazy.snapshot()  # module-level summary
+```
+
+Each module-level row carries `count` (real lazy imports), `hits`,
+`instances`, `cached` and `duration_ms`. Modules already in `sys.modules`
+resolve as `cached` with `duration_ms == 0.0`; concurrent first resolutions of
+the same module import it once and record one row.
+
+A read-only browser view of the live table is provided by the bundled
+stdlib-only HTTP service (no one-off scripts needed):
+
+```
+python -m import_tracker.lazy_stats_serve --port 8000 [--seed]
+```
+
+Open http://127.0.0.1:8000/ for the table or http://127.0.0.1:8000/api/stats
+for JSON. By default the statistics are also dumped to
+`lazy_import_stats.json` at interpreter exit; disable this with
+`IMPORT_TRACKER_LAZY_STATS=0` or choose a path with
+`IMPORT_TRACKER_LAZY_STATS_FILE`. Write failures at exit only emit a warning.
 ## Integrating `import_tracker` into a project
 
 When using `import_tracker` to implement optional dependencies in a project, there are two steps to take:
