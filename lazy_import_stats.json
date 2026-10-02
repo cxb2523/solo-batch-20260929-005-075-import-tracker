@@ -1,0 +1,25 @@
+{
+  "in_progress": [],
+  "modules": [
+    {
+      "cached": false,
+      "count": 1,
+      "duration_ms": 0.506,
+      "error": null,
+      "hits": 2,
+      "instances": 0,
+      "module": "csv",
+      "status": "complete"
+    },
+    {
+      "cached": true,
+      "count": 0,
+      "duration_ms": 0.0,
+      "error": null,
+      "hits": 1,
+      "instances": 0,
+      "module": "json",
+      "status": "complete"
+    }
+  ]
+}
